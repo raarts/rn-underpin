@@ -34,9 +34,19 @@ module.exports = {
   settings: {
     react: {
       version: "detect" // Tells eslint-plugin-react to automatically detect the version of React to use
+    },
+    "import/resolver": {
+      node: {
+        extensions: [".js", ".ts", ".tsx"]
+      }
     }
   },
   rules: {
+    'import/extensions': ['error', 'ignorePackages', {
+      js: 'never',
+      ts: 'never',
+      tsx: 'never',
+    }],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".ts", ".tsx"] }],
     "@typescript-eslint/no-use-before-define": ["error", { "variables": false, "functions": false }],
   },
