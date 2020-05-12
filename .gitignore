@@ -45,3 +45,5 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+# exclude Jest coverage reports.
+coverage/**/*
