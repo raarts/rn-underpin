@@ -8,6 +8,8 @@ module.exports = {
   extends: [
     'plugin:react/recommended',
     'airbnb',
+    'plugin:jest/recommended',
+    'plugin:jest/style',
     // Uses the recommended rules from the @typescript-eslint/eslint-plugin
     "plugin:@typescript-eslint/recommended",
     // Uses eslint-config-prettier to disable ESLint rules from @typescript-eslint/eslint-plugin that would conflict with prettier
@@ -30,6 +32,7 @@ module.exports = {
   },
   plugins: [
     'react',
+    'jest',
     '@typescript-eslint',
   ],
   settings: {

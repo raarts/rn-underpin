@@ -7,7 +7,7 @@ describe('<App />', () => {
   it('has 1 child', () => {
     const tree = renderer.create(<App />).toJSON();
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    expect(tree!.children!.length).toBe(1);
+    expect(tree!.children).toHaveLength(1);
   });
   it('renders correctly', () => {
     const tree = renderer.create(<App />).toJSON();
