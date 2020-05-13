@@ -4,6 +4,7 @@ import { Provider, useSelector, useDispatch } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import store, { persistor, RootState } from './store';
 import { setDarkMode } from './store/darkmode';
+import { _ } from './i18n';
 
 const DarkModeSwitch = (): ReactElement => {
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ export default function App(): ReactElement {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <View style={styles.container}>
-          <Text>Open up App.tsx to start working on your app!</Text>
+          <Text>{_('openAppAndStart')}</Text>
           <DarkModeSwitch />
         </View>
       </PersistGate>
