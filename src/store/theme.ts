@@ -3,7 +3,7 @@ import { Appearance } from 'react-native-appearance';
 import { rebuildTheme } from '../underpin/ThemeProvider';
 
 interface CurrentTheme {
-  theme: string;
+  name: string;
   darkMode: string;
 }
 
@@ -12,11 +12,11 @@ type CurrentThemeState = {
 } & CurrentTheme;
 
 const initialState: CurrentThemeState = {
-  theme: 'default',
+  name: 'default',
   darkMode: Appearance.getColorScheme(),
 };
 
-rebuildTheme(initialState.theme, initialState.darkMode);
+rebuildTheme(initialState.name, initialState.darkMode);
 
 // noinspection JSUnusedLocalSymbols
 const themeSlice = createSlice({
@@ -27,15 +27,15 @@ const themeSlice = createSlice({
     // setTheme(state, action: PayloadAction<CurrentTheme>) but then you would
     // invoke the action creator as setTheme({ true }).
     setTheme(state, action: PayloadAction<string>): void {
-      state.theme = action.payload;
-      rebuildTheme(state.theme, state.darkMode);
+      state.name = action.payload;
+      rebuildTheme(state.name, state.darkMode);
     },
     setDarkMode(state, action: PayloadAction<boolean>): void {
       state.darkMode = action.payload ? 'dark' : 'light';
-      rebuildTheme(state.theme, state.darkMode);
+      rebuildTheme(state.name, state.darkMode);
     },
     setThemeBuild(state): void {
-      rebuildTheme(state.theme, state.darkMode);
+      rebuildTheme(state.name, state.darkMode);
     },
   },
 });

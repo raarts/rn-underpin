@@ -55,6 +55,7 @@ module.exports = {
     '@typescript-eslint/no-use-before-define': ['error', { variables: false, functions: false }],
     // don't throw the no-param-reassign error for state modifications in reducers
     'no-param-reassign': ['error', { props: true, ignorePropertyModificationsFor: ['state'] }],
-    "no-plusplus": 0,
+    'no-plusplus': 0,
+    'global-require': 0,
   },
 };
