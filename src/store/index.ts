@@ -3,10 +3,10 @@ import { persistStore, persistReducer } from 'redux-persist';
 import { createLogger } from 'redux-logger';
 import { AsyncStorage } from 'react-native';
 import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from 'redux-persist/es/constants';
-import darkModeReducer from './darkmode';
+import themeReducer from './theme';
 
 const rootReducer = combineReducers({
-  darkMode: darkModeReducer,
+  theme: themeReducer,
 });
 
 const persistConfig = {
