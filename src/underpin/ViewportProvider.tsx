@@ -98,7 +98,6 @@ const ViewportProvider = ({ children }: Props): React.ReactElement => {
         scale = width / IPAD_PRO_WIDTH;
       }
     }
-
     setViewportWidth(width);
     setViewportHeight(height);
     setViewportOrientation(orientation);
