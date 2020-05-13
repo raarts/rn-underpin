@@ -1,7 +1,11 @@
-import React, { ReactElement } from 'react';
-import { Switch, Text, View } from 'react-native';
+import React, { useEffect, ReactElement, ReactNode } from 'react';
+import { Image, Switch, Text, View } from 'react-native';
+import * as Font from 'expo-font';
+import { Ionicons } from '@expo/vector-icons';
+import { Asset } from 'expo-asset';
 import { Provider, useSelector, useDispatch } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+import { SplashScreen } from 'expo';
 import store, { persistor, RootState } from './store';
 import { setDarkMode, setThemeBuild } from './store/theme';
 import ViewportProvider, { useViewport } from './underpin/ViewportProvider';
@@ -16,6 +20,7 @@ const Page = (): ReactElement => {
 
   return (
     <View style={styles.container}>
+      <Image source={require('./assets/images/robot-dev.png')} style={styles.welcomeImage} />
       <Text style={styles.color}>{_('openAppAndStart')}</Text>
       <Text style={styles.color}>{`screen: ${viewportWidth} x ${viewportHeight}`}</Text>
       <Text style={styles.color}>{`This looks like a ${viewportFormFactor} in ${viewportOrientation} mode`}</Text>
@@ -29,7 +34,63 @@ const Page = (): ReactElement => {
   );
 };
 
-export default function App(): ReactElement {
+const imageList: number[] | string[] = [require('./assets/images/robot-dev.png')];
+
+const fontList: (string | { [fontFamily: string]: Font.FontSource })[] = [
+  {
+    ...Ionicons.font,
+  },
+];
+
+export default function App(): ReactNode {
+  const [isLoadingComplete, setLoadingComplete] = React.useState(false);
+
+  useEffect(() => {
+    // This is the central function that asynchronously performs all initialization
+    async function loadResourcesAndDataAsync(): Promise<void> {
+      try {
+        SplashScreen.preventAutoHide();
+
+        const appPromises: any[] = [
+          // This is the place to put non-Underpin async functions
+        ];
+
+        // get and cache images
+        const cacheImages = (images: unknown[]): any[] => {
+          return images.map((image) => {
+            if (typeof image === 'string') {
+              return Image.prefetch(image);
+            }
+            return Asset.fromModule(image as string | number).downloadAsync();
+          });
+        };
+        const imageAssets = cacheImages(imageList);
+
+        // get and cache fonts
+        const cacheFonts = (fonts: (string | { [fontFamily: string]: Font.FontSource })[]): Promise<void>[] => {
+          return fonts.map(
+            (font: string | { [fontFamily: string]: Font.FontSource }): Promise<void> => Font.loadAsync(font),
+          );
+        };
+        const fontAssets = cacheFonts(fontList);
+
+        // wait for all promises to resolve
+        await Promise.all(appPromises.concat([...imageAssets, ...fontAssets]));
+      } catch (e) {
+        // We might want to provide this error information to an error reporting service
+        // eslint-disable-next-line no-console
+        console.warn(e);
+      } finally {
+        setLoadingComplete(true);
+        SplashScreen.hide();
+      }
+    }
+    loadResourcesAndDataAsync();
+  }, []);
+
+  if (!isLoadingComplete) {
+    return null;
+  }
   return (
     <Provider store={store}>
       <PersistGate
