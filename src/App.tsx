@@ -1,7 +1,8 @@
 import React, { ReactElement } from 'react';
 import { StyleSheet, Switch, Text, View } from 'react-native';
 import { Provider, useSelector, useDispatch } from 'react-redux';
-import store, { RootState } from './store';
+import { PersistGate } from 'redux-persist/integration/react';
+import store, { persistor, RootState } from './store';
 import { setDarkMode } from './store/darkmode';
 
 const DarkModeSwitch = (): ReactElement => {
@@ -21,10 +22,12 @@ const DarkModeSwitch = (): ReactElement => {
 export default function App(): ReactElement {
   return (
     <Provider store={store}>
-      <View style={styles.container}>
-        <Text>Open up App.tsx to start working on your app!</Text>
-        <DarkModeSwitch />
-      </View>
+      <PersistGate loading={null} persistor={persistor}>
+        <View style={styles.container}>
+          <Text>Open up App.tsx to start working on your app!</Text>
+          <DarkModeSwitch />
+        </View>
+      </PersistGate>
     </Provider>
   );
 }
