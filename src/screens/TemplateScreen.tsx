@@ -3,14 +3,14 @@ import { Image, Switch, Text, View } from 'react-native';
 import { ReactElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { _ } from '../i18n';
-import ThemeProvider, { useTheme } from '../underpin/ThemeProvider';
+import ThemesProvider, { useWithTheme } from '../underpin/ThemesProvider';
 import { RootState } from '../store';
 import { useViewport } from '../underpin/ViewportProvider';
 import { setDarkMode } from '../store/theme';
 
 const TemplateScreen = (): ReactElement => {
   const dispatch = useDispatch();
-  const styles = useTheme(baseStyles);
+  const styles = useWithTheme(baseStyles);
   const { darkMode } = useSelector((state: RootState) => state.theme);
   const { viewportWidth, viewportHeight, viewportOrientation, viewportFormFactor } = useViewport();
 
@@ -30,7 +30,7 @@ const TemplateScreen = (): ReactElement => {
   );
 };
 
-const styles = ThemeProvider.create({
+const styles = ThemesProvider.create({
   container: {
     flex: 1,
     backgroundColor: '$backgroundColor',

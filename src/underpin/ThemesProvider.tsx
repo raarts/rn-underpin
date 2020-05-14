@@ -19,7 +19,7 @@ export const rebuildTheme = (name: string, darkMode: string): void => {
   EStyleSheet.build(styleSheet);
 };
 
-const ThemeProvider = ({ children }: Props): React.ReactElement => {
+const ThemesProvider = ({ children }: Props): React.ReactElement => {
   const { viewportWidth, viewportHeight, viewportOrientation, viewportScale } = useViewport();
   const { name, darkMode } = useSelector((state: RootState) => state.theme);
 
@@ -33,7 +33,7 @@ const ThemeProvider = ({ children }: Props): React.ReactElement => {
   return <ThemeContext.Provider value={{}}>{children}</ThemeContext.Provider>;
 };
 
-const useTheme = (spec: AnyObject): AnyObject => {
+const useWithTheme = (spec: AnyObject): AnyObject => {
   const { viewportFormFactor, viewportOrientation, viewportScale } = useViewport();
 
   const layoutDataWithScale = { ...styles, $scale: viewportScale, ...spec };
@@ -43,8 +43,8 @@ const useTheme = (spec: AnyObject): AnyObject => {
 };
 
 // Dummy function, but it allows checking unused styles with eslint-plugin-react-native/no-unused-styles
-// with setting 'react-native/style-sheet-object-names': ['ThemeProvider'],
-ThemeProvider.create = (styleObject: object): object => styleObject;
+// with setting 'react-native/style-sheet-object-names': ['ThemesProvider'],
+ThemesProvider.create = (styleObject: object): object => styleObject;
 
-export default ThemeProvider;
-export { useTheme };
+export default ThemesProvider;
+export { useWithTheme };

@@ -11,7 +11,7 @@ import store from './store';
 import { setThemeBuild } from './store/theme';
 import { navigationRef } from './store/navigation';
 import ViewportProvider from './underpin/ViewportProvider';
-import ThemeProvider from './underpin/ThemeProvider';
+import ThemesProvider from './underpin/ThemesProvider';
 import RootStackNavigator from './navigation/RootStackNavigator';
 import useLinking from './navigation/useLinking';
 
@@ -95,7 +95,7 @@ export default function App(): ReactNode {
   return (
     <Provider store={store}>
       <ViewportProvider>
-        <ThemeProvider>
+        <ThemesProvider>
           <RootStackNavigator
             ref={
               (navigationRef as unknown) as
@@ -106,7 +106,7 @@ export default function App(): ReactNode {
             }
             initialNavigationState={initialNavigationState}
           />
-        </ThemeProvider>
+        </ThemesProvider>
       </ViewportProvider>
     </Provider>
   );
