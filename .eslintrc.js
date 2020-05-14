@@ -55,6 +55,8 @@ module.exports = {
       },
     ],
     'react/jsx-filename-extension': [1, { extensions: ['.js', '.ts', '.tsx'] }],
+    'react/prop-types': 0,
+    'react/jsx-props-no-spreading': 'off',
     '@typescript-eslint/no-use-before-define': ['error', { variables: false, functions: false }],
     // don't throw the no-param-reassign error for state modifications in reducers
     'no-param-reassign': ['error', { props: true, ignorePropertyModificationsFor: ['state'] }],

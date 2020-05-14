@@ -3,8 +3,10 @@ import { NavigationContainer, NavigationContainerRef, InitialState } from '@reac
 import * as React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ReactElement, Ref } from 'react';
-import ThemeProvider, { useTheme } from '../underpin/ThemeProvider';
-import TemplateScreen from '../screens/TemplateScreen';
+import { StackHeaderMode } from '@react-navigation/stack/lib/typescript/src/types.d';
+import ThemesProvider, { useWithTheme } from '../underpin/ThemesProvider';
+import RootBottomTabNavigator from './BottomTabNavigator';
+import RootMenuBarNavigator from './MenuBarNavigator';
 
 export type RootStackNavigatorParamList = {
   Root: undefined;
@@ -17,25 +19,35 @@ type Props = {
 const Stack = createStackNavigator<RootStackNavigatorParamList>();
 
 const Navigator = ({ initialNavigationState }: Props, ref: Ref<NavigationContainerRef> | null): ReactElement => {
-  const styles = useTheme(baseStyles);
+  const [MenuOrTabNavigator, headerMode] = chooseMenuOrTab();
+  const styles = useWithTheme(baseStyles);
   return (
     <NavigationContainer ref={ref} initialState={initialNavigationState}>
       <Stack.Navigator
-        headerMode="none"
+        headerMode={headerMode}
         screenOptions={{
           headerStyle: styles.headerStyle,
           headerTitleStyle: styles.headerTitleStyle,
         }}
       >
-        <Stack.Screen name="Root" component={TemplateScreen} />
+        <Stack.Screen name="Root" component={MenuOrTabNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
-
 const RootStackNavigator = React.forwardRef(Navigator);
 
-const styles = ThemeProvider.create({
+function chooseMenuOrTab(): [() => React.ReactElement, StackHeaderMode] {
+  if (Platform.OS === 'ios') {
+    return [RootBottomTabNavigator, 'none'];
+  }
+  if (Platform.OS === 'android') {
+    return [RootBottomTabNavigator, 'none'];
+  }
+  return [RootMenuBarNavigator, 'none'];
+}
+
+const styles = ThemesProvider.create({
   headerStyle: {
     backgroundColor: '$backgroundColor',
     ...Platform.select({
