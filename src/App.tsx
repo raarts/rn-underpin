@@ -4,9 +4,9 @@ import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import { Asset } from 'expo-asset';
 import { Provider, useSelector, useDispatch } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
 import { SplashScreen } from 'expo';
-import store, { persistor, RootState } from './store';
+import { persistStore } from 'redux-persist';
+import store, { RootState } from './store';
 import { setDarkMode, setThemeBuild } from './store/theme';
 import ViewportProvider, { useViewport } from './underpin/ViewportProvider';
 import ThemeProvider, { useTheme } from './underpin/ThemeProvider';
@@ -51,12 +51,22 @@ export default function App(): ReactNode {
       try {
         SplashScreen.preventAutoHide();
 
-        const appPromises: any[] = [
+        const persistStoreAsync = (currentStore: typeof store): Promise<void> => {
+          return new Promise((resolve) => {
+            persistStore(currentStore, null, () => {
+              currentStore.getState();
+              resolve();
+            });
+          });
+        };
+
+        const appPromises: Promise<void>[] = [
           // This is the place to put non-Underpin async functions
+          persistStoreAsync(store),
         ];
 
         // get and cache images
-        const cacheImages = (images: unknown[]): any[] => {
+        const cacheImages = (images: unknown[]): Promise<void>[] => {
           return images.map((image) => {
             if (typeof image === 'string') {
               return Image.prefetch(image);
@@ -81,11 +91,12 @@ export default function App(): ReactNode {
         // eslint-disable-next-line no-console
         console.warn(e);
       } finally {
+        store.dispatch(setThemeBuild());
         setLoadingComplete(true);
         SplashScreen.hide();
       }
     }
-    loadResourcesAndDataAsync();
+    loadResourcesAndDataAsync().then();
   }, []);
 
   if (!isLoadingComplete) {
@@ -93,19 +104,11 @@ export default function App(): ReactNode {
   }
   return (
     <Provider store={store}>
-      <PersistGate
-        loading={null}
-        onBeforeLift={(): void => {
-          store.dispatch(setThemeBuild());
-        }}
-        persistor={persistor}
-      >
-        <ViewportProvider>
-          <ThemeProvider>
-            <Page />
-          </ThemeProvider>
-        </ViewportProvider>
-      </PersistGate>
+      <ViewportProvider>
+        <ThemeProvider>
+          <Page />
+        </ThemeProvider>
+      </ViewportProvider>
     </Provider>
   );
 }

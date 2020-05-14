@@ -1,5 +1,5 @@
 import { configureStore, combineReducers, getDefaultMiddleware } from '@reduxjs/toolkit';
-import { persistStore, persistReducer } from 'redux-persist';
+import { persistReducer } from 'redux-persist';
 import { createLogger } from 'redux-logger';
 import { AsyncStorage } from 'react-native';
 import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from 'redux-persist/es/constants';
@@ -40,8 +40,6 @@ const store = configureStore({
   reducer: persistedReducer,
   middleware,
 });
-
-export const persistor = persistStore(store);
 
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = typeof store.dispatch;
