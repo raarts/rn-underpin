@@ -15,6 +15,28 @@ import ThemesProvider from './underpin/ThemesProvider';
 import RootStackNavigator from './navigation/RootStackNavigator';
 import useLinking from './navigation/useLinking';
 
+// How to extend the RootNavigator concept to apply to multiple form factors and orientations
+// import PortraitPhoneRootStackNavigator from './navigation/portrait/phone/RootStackNavigator';
+// import PortraitTabletRootStackNavigator from './navigation/portrait/tablet/RootStackNavigator';
+// import PortraitMonitorRootStackNavigator from './navigation/portrait/monitor/RootStackNavigator';
+//
+// import LandscapePhoneRootStackNavigator from './navigation/landscape/phone/RootStackNavigator';
+// import LandscapeTabletRootStackNavigator from './navigation/landscape/tablet/RootStackNavigator';
+// import LandscapeMonitorRootStackNavigator from './navigation/landscape/monitor/RootStackNavigator';
+//
+// const rootNavMatrix = {
+//   portrait: {
+//     phone: PortraitPhoneRootStackNavigator,
+//     tablet: PortraitTabletRootStackNavigator,
+//     monitor: PortraitMonitorRootStackNavigator,
+//   },
+//   landscape: {
+//     phone: LandscapePhoneRootStackNavigator,
+//     tablet: LandscapeTabletRootStackNavigator,
+//     monitor: LandscapeMonitorRootStackNavigator,
+//   },
+// };
+
 const imageList: number[] | string[] = [require('./assets/images/robot-dev.png')];
 
 const fontList: (string | { [fontFamily: string]: Font.FontSource })[] = [
@@ -92,6 +114,10 @@ export default function App(): ReactNode {
   if (!isLoadingComplete) {
     return null;
   }
+
+  // How to extend the RootNavigator concept to apply to multiple form factors and orientations
+  // const { orientation, screenFormFactor } = useViewport();
+  // const RootStackNavigator = rootNavMatrix[orientation][screenFormFactor];
   return (
     <Provider store={store}>
       <ViewportProvider>
