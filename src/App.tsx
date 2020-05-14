@@ -110,7 +110,7 @@ export default function App(): ReactNode {
   );
 }
 
-const baseStyles = {
+const styles = ThemeProvider.create({
   container: {
     flex: 1,
     backgroundColor: '$backgroundColor',
@@ -127,4 +127,6 @@ const baseStyles = {
     marginTop: 3,
     marginLeft: -10,
   },
-};
+});
+
+const baseStyles = styles;

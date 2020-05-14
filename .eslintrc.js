@@ -4,9 +4,11 @@ module.exports = {
     es6: true,
     node: true,
     jest: true,
+    'react-native/react-native': true,
   },
   extends: [
     'plugin:react/recommended',
+    'plugin:react-native/all',
     'airbnb',
     'plugin:jest/recommended',
     'plugin:jest/style',
@@ -40,6 +42,7 @@ module.exports = {
         extensions: ['.js', '.ts', '.tsx'],
       },
     },
+    'react-native/style-sheet-object-names': ['ThemeProvider'],
   },
   rules: {
     'import/extensions': [
@@ -57,5 +60,7 @@ module.exports = {
     'no-param-reassign': ['error', { props: true, ignorePropertyModificationsFor: ['state'] }],
     'no-plusplus': 0,
     'global-require': 0,
+    'react-native/no-color-literals': 0,
+    'react-native/sort-styles': 0,
   },
 };

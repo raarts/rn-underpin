@@ -42,5 +42,9 @@ const useTheme = (spec: AnyObject): AnyObject => {
   }, [viewportFormFactor, viewportOrientation, viewportScale, spec]);
 };
 
+// Dummy function, but it allows checking unused styles with eslint-plugin-react-native/no-unused-styles
+// with setting 'react-native/style-sheet-object-names': ['ThemeProvider'],
+ThemeProvider.create = (styleObject: object): object => styleObject;
+
 export default ThemeProvider;
 export { useTheme };
