@@ -1,38 +1,19 @@
-import React, { useEffect, ReactElement, ReactNode } from 'react';
-import { Image, Switch, Text, View } from 'react-native';
+import React, { useEffect, ReactNode, SetStateAction, RefObject } from 'react';
+import { Image } from 'react-native';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import { Asset } from 'expo-asset';
-import { Provider, useSelector, useDispatch } from 'react-redux';
+import { Provider } from 'react-redux';
 import { SplashScreen } from 'expo';
 import { persistStore } from 'redux-persist';
-import store, { RootState } from './store';
-import { setDarkMode, setThemeBuild } from './store/theme';
-import ViewportProvider, { useViewport } from './underpin/ViewportProvider';
-import ThemeProvider, { useTheme } from './underpin/ThemeProvider';
-import { _ } from './i18n';
-
-const Page = (): ReactElement => {
-  const dispatch = useDispatch();
-  const styles = useTheme(baseStyles);
-  const { darkMode } = useSelector((state: RootState) => state.theme);
-  const { viewportWidth, viewportHeight, viewportOrientation, viewportFormFactor } = useViewport();
-
-  return (
-    <View style={styles.container}>
-      <Image source={require('./assets/images/robot-dev.png')} style={styles.welcomeImage} />
-      <Text style={styles.color}>{_('openAppAndStart')}</Text>
-      <Text style={styles.color}>{`screen: ${viewportWidth} x ${viewportHeight}`}</Text>
-      <Text style={styles.color}>{`This looks like a ${viewportFormFactor} in ${viewportOrientation} mode`}</Text>
-      <Switch
-        value={darkMode === 'dark'}
-        onValueChange={(v): void => {
-          dispatch(setDarkMode(v));
-        }}
-      />
-    </View>
-  );
-};
+import { NavigationContainerRef } from '@react-navigation/native';
+import store from './store';
+import { setThemeBuild } from './store/theme';
+import { navigationRef } from './store/navigation';
+import ViewportProvider from './underpin/ViewportProvider';
+import ThemeProvider from './underpin/ThemeProvider';
+import RootStackNavigator from './navigation/RootStackNavigator';
+import useLinking from './navigation/useLinking';
 
 const imageList: number[] | string[] = [require('./assets/images/robot-dev.png')];
 
@@ -44,6 +25,8 @@ const fontList: (string | { [fontFamily: string]: Font.FontSource })[] = [
 
 export default function App(): ReactNode {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
+  const [initialNavigationState, setInitialNavigationState] = React.useState();
+  const { getInitialState } = useLinking(navigationRef);
 
   useEffect(() => {
     // This is the central function that asynchronously performs all initialization
@@ -60,8 +43,10 @@ export default function App(): ReactNode {
           });
         };
 
-        const appPromises: Promise<void>[] = [
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const appPromises: (PromiseLike<any> | Promise<void>)[] = [
           // This is the place to put non-Underpin async functions
+          getInitialState(),
           persistStoreAsync(store),
         ];
 
@@ -85,7 +70,12 @@ export default function App(): ReactNode {
         const fontAssets = cacheFonts(fontList);
 
         // wait for all promises to resolve
-        await Promise.all(appPromises.concat([...imageAssets, ...fontAssets]));
+        await Promise.all(appPromises.concat([...imageAssets, ...fontAssets])).then(
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          ([navState]): void | PromiseLike<unknown> => {
+            setInitialNavigationState(navState as SetStateAction<undefined>);
+          },
+        );
       } catch (e) {
         // We might want to provide this error information to an error reporting service
         // eslint-disable-next-line no-console
@@ -106,30 +96,18 @@ export default function App(): ReactNode {
     <Provider store={store}>
       <ViewportProvider>
         <ThemeProvider>
-          <Page />
+          <RootStackNavigator
+            ref={
+              (navigationRef as unknown) as
+                | ((instance: NavigationContainerRef | null) => void)
+                | RefObject<NavigationContainerRef>
+                | null
+                | undefined
+            }
+            initialNavigationState={initialNavigationState}
+          />
         </ThemeProvider>
       </ViewportProvider>
     </Provider>
   );
 }
-
-const styles = ThemeProvider.create({
-  container: {
-    flex: 1,
-    backgroundColor: '$backgroundColor',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  color: {
-    color: '$textColor',
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-});
-
-const baseStyles = styles;
