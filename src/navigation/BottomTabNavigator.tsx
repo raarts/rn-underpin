@@ -2,11 +2,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as React from 'react';
 import { ReactElement } from 'react';
 import TabBarIcon from './TabBarIcon';
-import TemplateScreen from '../screens/TemplateScreen';
+import Tab1StackNavigator from './Tab1StackNavigator';
+import Tab2StackNavigator from './Tab2StackNavigator';
+import Tab3StackNavigator from './Tab3StackNavigator';
 import ThemesProvider, { useWithTheme } from '../underpin/ThemesProvider';
 
 const BottomTab = createBottomTabNavigator();
-const INITIAL_ROUTE_NAME = 'Home';
+const INITIAL_ROUTE_NAME = 'Tab1';
 
 export default function BottomTabNavigator(): ReactElement {
   const styles = useWithTheme(baseStyles);
@@ -17,26 +19,26 @@ export default function BottomTabNavigator(): ReactElement {
       tabBarOptions={{ style: styles.tabBarStyle, labelStyle: styles.tabBarStyle }}
     >
       <BottomTab.Screen
-        name="Contact"
-        component={TemplateScreen}
+        name="Tab1"
+        component={Tab1StackNavigator}
         options={{
-          title: 'Contacts',
+          title: 'Tab1',
           tabBarIcon: ({ focused }): ReactElement => <TabBarIcon focused={focused} name="user" />,
         }}
       />
       <BottomTab.Screen
-        name="Recent"
-        component={TemplateScreen}
+        name="Tab2"
+        component={Tab2StackNavigator}
         options={{
-          title: 'Recent Calls',
+          title: 'Tab2',
           tabBarIcon: ({ focused }): ReactElement => <TabBarIcon focused={focused} name="clock-o" />,
         }}
       />
       <BottomTab.Screen
-        name="Settings"
-        component={TemplateScreen}
+        name="Tab3"
+        component={Tab3StackNavigator}
         options={{
-          title: 'Settings',
+          title: 'Tab3',
           tabBarIcon: ({ focused }): ReactElement => <TabBarIcon focused={focused} name="cog" />,
         }}
       />

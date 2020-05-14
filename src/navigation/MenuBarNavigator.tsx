@@ -4,11 +4,13 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 
 import { ReactElement } from 'react';
 import MenuBar from './MenuBar';
-import TemplateScreen from '../screens/TemplateScreen';
+import Tab1StackNavigator from './Tab1StackNavigator';
+import Tab2StackNavigator from './Tab2StackNavigator';
+import Tab3StackNavigator from './Tab3StackNavigator';
 import { useViewport } from '../underpin/ViewportProvider';
 
 const TopMenu = createMaterialTopTabNavigator();
-const INITIAL_ROUTE_NAME = 'Home';
+const INITIAL_ROUTE_NAME = 'Menu1';
 
 export default function MenuBarNavigator(): React.ReactElement {
   const { viewportWidth } = useViewport();
@@ -24,24 +26,24 @@ export default function MenuBarNavigator(): React.ReactElement {
       }}
     >
       <TopMenu.Screen
-        name="Home"
-        component={TemplateScreen}
+        name="Menu1"
+        component={Tab1StackNavigator}
         options={{
-          title: 'Contacts',
+          title: 'Menu1',
         }}
       />
       <TopMenu.Screen
-        name="Recent"
-        component={TemplateScreen}
+        name="Menu2"
+        component={Tab2StackNavigator}
         options={{
-          title: 'Recent',
+          title: 'Menu2',
         }}
       />
       <TopMenu.Screen
-        name="Settings"
-        component={TemplateScreen}
+        name="Menu3"
+        component={Tab3StackNavigator}
         options={{
-          title: 'Settings',
+          title: 'Menu3',
         }}
       />
     </TopMenu.Navigator>
