@@ -2,6 +2,9 @@ import { AnyObject } from '@raarts/react-native-extended-stylesheet';
 import { Platform } from 'react-native';
 
 const styles: AnyObject = {
+  theme: {
+    fontFamily: '$theme',
+  },
   flex1: {
     flex: 1,
   },
