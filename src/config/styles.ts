@@ -17,6 +17,18 @@ const styles: AnyObject = {
   flex5: {
     flex: 5,
   },
+  flex6: {
+    flex: 6,
+  },
+  flex7: {
+    flex: 7,
+  },
+  flex8: {
+    flex: 8,
+  },
+  flex9: {
+    flex: 9,
+  },
   border: {
     ...Platform.select({
       android: {
