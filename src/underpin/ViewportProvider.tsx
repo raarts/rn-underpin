@@ -93,7 +93,7 @@ const initialViewport = calculateViewport({ window: Dimensions.get('window'), sc
 const ViewportContext = React.createContext(initialViewport);
 
 const ViewportProvider = ({ children }: Props): React.ReactElement => {
-  const renderCounter = React.useRef(0);
+  const renderCounter = React.useRef(1);
   const [viewport, setViewport] = React.useState(initialViewport);
 
   // Handle dimension change, i.e. device rotation, browser resizes, split windows on devices
@@ -113,7 +113,12 @@ const ViewportProvider = ({ children }: Props): React.ReactElement => {
 
   if (__DEV__) {
     // eslint-disable-next-line no-console
-    console.log(`${renderCounter.current++} ViewportProvider.tsx: `, viewport);
+    console.log(
+      `${renderCounter.current++} ViewportProvider.tsx: ${viewport.viewportWidth}x${viewport.viewportHeight}`,
+      viewport.viewportFormFactor,
+      viewport.viewportOrientation,
+      viewport.viewportScale,
+    );
   }
   return <ViewportContext.Provider value={viewport}>{children}</ViewportContext.Provider>;
 };
