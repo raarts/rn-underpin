@@ -24,10 +24,7 @@ const ThemeProvider = ({ children }: Props): React.ReactElement => {
   const { name, darkMode } = useSelector((state: RootState) => state.theme);
 
   React.useEffect(() => {
-    const styleSheet: AnyObject = Object.assign(themes[name][darkMode ? 'dark' : 'light'], {
-      $theme: `${name}/${darkMode ? 'dark' : 'light'}`,
-    });
-    EStyleSheet.build(styleSheet);
+    rebuildTheme(name, darkMode);
   }, [viewportWidth, viewportHeight, viewportOrientation, viewportScale, darkMode]);
 
   return <ThemeContext.Provider value={{}}>{children}</ThemeContext.Provider>;

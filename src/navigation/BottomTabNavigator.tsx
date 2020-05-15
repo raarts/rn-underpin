@@ -1,16 +1,20 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as React from 'react';
 import { ReactElement } from 'react';
+import { useSelector } from 'react-redux';
 import TabBarIcon from './TabBarIcon';
 import Tab1StackNavigator from './Tab1StackNavigator';
 import Tab2StackNavigator from './Tab2StackNavigator';
 import Tab3StackNavigator from './Tab3StackNavigator';
 import ThemeProvider, { applyTheme } from '../underpin/ThemeProvider';
+import { RootState } from '../store';
 
 const BottomTab = createBottomTabNavigator();
 const INITIAL_ROUTE_NAME = 'Tab1';
 
 export default function BottomTabNavigator(): ReactElement {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { name, darkMode } = useSelector((state: RootState) => state.theme);
   const styles = applyTheme(baseStyles);
 
   return (
