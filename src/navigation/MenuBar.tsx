@@ -4,10 +4,10 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import * as React from 'react';
 import { ReactElement } from 'react';
-import ThemesProvider, { useWithTheme } from '../underpin/ThemesProvider';
+import ThemeProvider, { applyTheme } from '../underpin/ThemeProvider';
 
 export default function MenuBar({ state, descriptors, navigation }: MaterialTopTabBarProps): ReactElement {
-  const styles = useWithTheme(baseStyles);
+  const styles = applyTheme(baseStyles);
 
   // console.log('MenuBar: state: ', state);
   // console.log('MenuBar: descriptors: ', descriptors);
@@ -68,7 +68,7 @@ export default function MenuBar({ state, descriptors, navigation }: MaterialTopT
   );
 }
 
-const styles = ThemesProvider.create({
+const styles = ThemeProvider.create({
   menuBarContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-start',

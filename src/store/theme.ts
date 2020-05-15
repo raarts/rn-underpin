@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Appearance } from 'react-native-appearance';
-import { rebuildTheme } from '../underpin/ThemesProvider';
+import { rebuildTheme } from '../underpin/ThemeProvider';
 
 interface CurrentTheme {
   name: string;

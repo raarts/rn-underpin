@@ -4,7 +4,7 @@ import * as React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ReactElement, Ref } from 'react';
 import { StackHeaderMode } from '@react-navigation/stack/lib/typescript/src/types.d';
-import ThemesProvider, { useWithTheme } from '../underpin/ThemesProvider';
+import ThemeProvider, { applyTheme } from '../underpin/ThemeProvider';
 import RootBottomTabNavigator from './BottomTabNavigator';
 import RootMenuBarNavigator from './MenuBarNavigator';
 
@@ -20,7 +20,7 @@ const Stack = createStackNavigator<RootStackNavigatorParamList>();
 
 const Navigator = ({ initialNavigationState }: Props, ref: Ref<NavigationContainerRef> | null): ReactElement => {
   const [MenuOrTabNavigator, headerMode] = chooseMenuOrTab();
-  const styles = useWithTheme(baseStyles);
+  const styles = applyTheme(baseStyles);
   return (
     <NavigationContainer ref={ref} initialState={initialNavigationState}>
       <Stack.Navigator
@@ -47,7 +47,7 @@ function chooseMenuOrTab(): [() => React.ReactElement, StackHeaderMode] {
   return [RootMenuBarNavigator, 'none'];
 }
 
-const styles = ThemesProvider.create({
+const styles = ThemeProvider.create({
   headerStyle: {
     backgroundColor: '$backgroundColor',
     ...Platform.select({

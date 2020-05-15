@@ -1,7 +1,7 @@
 import { FontAwesome } from '@expo/vector-icons';
 import * as React from 'react';
 import { ReactElement } from 'react';
-import ThemesProvider, { useWithTheme } from '../underpin/ThemesProvider';
+import ThemeProvider, { applyTheme } from '../underpin/ThemeProvider';
 
 interface Props {
   name: string;
@@ -9,13 +9,13 @@ interface Props {
 }
 
 const TabBarIcon = ({ name, focused }: Props): ReactElement => {
-  const styles = useWithTheme(baseStyles);
+  const styles = applyTheme(baseStyles);
   const { color } = styles.selected;
   const { backgroundColor } = styles.default;
   return <FontAwesome name={name} size={26} style={styles.icon} color={focused ? color : backgroundColor} />;
 };
 
-const styles = ThemesProvider.create({
+const styles = ThemeProvider.create({
   selected: {
     color: '$textColor',
   },

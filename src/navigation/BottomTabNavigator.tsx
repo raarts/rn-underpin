@@ -5,13 +5,13 @@ import TabBarIcon from './TabBarIcon';
 import Tab1StackNavigator from './Tab1StackNavigator';
 import Tab2StackNavigator from './Tab2StackNavigator';
 import Tab3StackNavigator from './Tab3StackNavigator';
-import ThemesProvider, { useWithTheme } from '../underpin/ThemesProvider';
+import ThemeProvider, { applyTheme } from '../underpin/ThemeProvider';
 
 const BottomTab = createBottomTabNavigator();
 const INITIAL_ROUTE_NAME = 'Tab1';
 
 export default function BottomTabNavigator(): ReactElement {
-  const styles = useWithTheme(baseStyles);
+  const styles = applyTheme(baseStyles);
 
   return (
     <BottomTab.Navigator
@@ -46,7 +46,7 @@ export default function BottomTabNavigator(): ReactElement {
   );
 }
 
-const styles = ThemesProvider.create({
+const styles = ThemeProvider.create({
   tabBarStyle: {
     backgroundColor: '$backgroundColor',
   },
