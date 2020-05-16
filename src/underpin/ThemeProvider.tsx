@@ -42,6 +42,8 @@ const applyTheme = (spec: AnyObject): AnyObject => {
 // Dummy function, but it allows checking unused styles with eslint-plugin-react-native/no-unused-styles
 // with setting 'react-native/style-sheet-object-names': ['ThemeProvider'],
 ThemeProvider.create = (styleObject: object): object => styleObject;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ThemeProvider.value = (expr: any): any => EStyleSheet.value(expr);
 
 export default ThemeProvider;
 export { applyTheme };
