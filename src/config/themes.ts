@@ -29,7 +29,7 @@ const themes: AnyObject = {
           $textColor: 'blue',
         },
         web: {
-          $textColor: 'purple',
+          $textColor: 'lightcyan',
         },
       }),
     },
