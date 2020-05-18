@@ -1,4 +1,4 @@
-import React, { useEffect, ReactNode, SetStateAction, RefObject } from 'react';
+import React, { useEffect, ReactNode, SetStateAction, RefObject, useReducer } from 'react';
 import { Image } from 'react-native';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,6 +14,7 @@ import ViewportProvider from './underpin/ViewportProvider';
 import ThemeProvider from './underpin/ThemeProvider';
 import RootStackNavigator from './navigation/RootStackNavigator';
 import useLinking from './navigation/useLinking';
+import ErrorBoundary from './underpin/ErrorBoundary';
 
 // How to extend the RootNavigator concept to apply to multiple form factors and orientations
 // import PortraitPhoneRootStackNavigator from './navigation/portrait/phone/RootStackNavigator';
@@ -46,6 +47,7 @@ const fontList: (string | { [fontFamily: string]: Font.FontSource })[] = [
 ];
 
 export default function App(): ReactNode {
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
   const [initialNavigationState, setInitialNavigationState] = React.useState();
   const { getInitialState } = useLinking(navigationRef);
@@ -122,16 +124,18 @@ export default function App(): ReactNode {
     <Provider store={store}>
       <ViewportProvider>
         <ThemeProvider>
-          <RootStackNavigator
-            ref={
-              (navigationRef as unknown) as
-                | ((instance: NavigationContainerRef | null) => void)
-                | RefObject<NavigationContainerRef>
-                | null
-                | undefined
-            }
-            initialNavigationState={initialNavigationState}
-          />
+          <ErrorBoundary forceReload={forceUpdate}>
+            <RootStackNavigator
+              ref={
+                (navigationRef as unknown) as
+                  | ((instance: NavigationContainerRef | null) => void)
+                  | RefObject<NavigationContainerRef>
+                  | null
+                  | undefined
+              }
+              initialNavigationState={initialNavigationState}
+            />
+          </ErrorBoundary>
         </ThemeProvider>
       </ViewportProvider>
     </Provider>
