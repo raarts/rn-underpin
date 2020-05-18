@@ -2,16 +2,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Appearance } from 'react-native-appearance';
 import { rebuildTheme } from '../underpin/ThemeProvider';
 
-interface CurrentTheme {
-  name: string;
-  darkMode: string;
-}
+type Theme = typeof initialState;
 
-type CurrentThemeState = {
-  // other parameters here
-} & CurrentTheme;
-
-const initialState: CurrentThemeState = {
+const initialState = {
   name: 'default',
   darkMode: Appearance.getColorScheme(),
 };
@@ -24,7 +17,7 @@ const themeSlice = createSlice({
   initialState,
   reducers: {
     // example of a plain PayLoad action creator. Could just as well have been
-    // setTheme(state, action: PayloadAction<CurrentTheme>) but then you would
+    // setTheme(state, action: PayloadAction<Theme>) but then you would
     // invoke the action creator as setTheme({ true }).
     setTheme(state, action: PayloadAction<string>): void {
       state.name = action.payload;
