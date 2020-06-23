@@ -2,15 +2,18 @@ import { configureStore, combineReducers, getDefaultMiddleware } from '@reduxjs/
 import { persistReducer } from 'redux-persist';
 import { createLogger } from 'redux-logger';
 import { AsyncStorage } from 'react-native';
+import Constants from 'expo-constants';
 import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from 'redux-persist/es/constants';
 import themeReducer from './theme';
+import identityReducer from './identity';
 
 const rootReducer = combineReducers({
   theme: themeReducer,
+  identity: identityReducer,
 });
 
 const persistConfig = {
-  key: 'root',
+  key: Constants.manifest.slug || 'root',
   storage: AsyncStorage,
 };
 const persistedReducer = persistReducer(persistConfig, rootReducer);

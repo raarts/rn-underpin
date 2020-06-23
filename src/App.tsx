@@ -9,6 +9,7 @@ import { persistStore } from 'redux-persist';
 import { NavigationContainerRef } from '@react-navigation/native';
 import store from './store';
 import { setThemeBuild } from './store/theme';
+import { setAnonymousId } from './store/identity';
 import { navigationRef } from './store/navigation';
 import ViewportProvider from './underpin/ViewportProvider';
 import ThemeProvider from './underpin/ThemeProvider';
@@ -107,6 +108,7 @@ export default function App(): ReactNode {
         console.warn(e);
       } finally {
         store.dispatch(setThemeBuild());
+        store.dispatch(setAnonymousId());
         setLoadingComplete(true);
         SplashScreen.hide();
       }

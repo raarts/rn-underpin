@@ -3,8 +3,10 @@ import * as WebBrowser from 'expo-web-browser';
 import * as AuthSession from 'expo-auth-session';
 import { makeRedirectUri } from 'expo-auth-session';
 import { Alert, Platform } from 'react-native';
+import { useDispatch } from 'react-redux';
 import jwtDecode from 'jwt-decode';
 import formUrlEncode from './utils/formUrlEncode';
+import { setIdentity, clearIdentity } from '../store/identity';
 
 export interface AccessToken {
   acr: string;
@@ -32,6 +34,27 @@ export interface AccessToken {
     };
   };
   scope: string;
+  session_state: string;
+  sub: string;
+  typ: string;
+}
+
+export interface IdToken {
+  acr: string;
+  aud: string;
+  auth_time: number;
+  azp: string;
+  email: string;
+  exp: number;
+  family_name: string;
+  given_name: string;
+  iat: number;
+  iss: string;
+  jti: string;
+  name: string;
+  nbf: number;
+  nonce: string;
+  preferred_username: string;
   session_state: string;
   sub: string;
   typ: string;
@@ -80,6 +103,7 @@ type Props = {
 };
 
 const KeycloakAuthentication = ({ children, urlDiscovery, clientId, onChange }: Props): ReactElement => {
+  const dispatch = useDispatch();
   const [loginState, setLoginState] = React.useState<LoginState>('loggedout');
   const [working, setWorking] = React.useState<boolean>(false);
   const [code, setCode] = React.useState<string>('');
@@ -102,6 +126,9 @@ const KeycloakAuthentication = ({ children, urlDiscovery, clientId, onChange }: 
   const changeLoginState = (newState: LoginState): void => {
     setLoginState(newState);
     setWorking(newState !== 'loggedout' && newState !== 'loggedin');
+    if (newState === 'loggedout') {
+      dispatch(clearIdentity());
+    }
     if (onChange) {
       if (newState === 'loggedin') {
         onChange(newState, authCodeResponse?.id_token || '');
@@ -166,6 +193,8 @@ const KeycloakAuthentication = ({ children, urlDiscovery, clientId, onChange }: 
       setAuthCodeResponse(authCode);
 
       const accessToken = jwtDecode(authCode.access_token || '') as AccessToken;
+      const idToken = jwtDecode(authCode.id_token || '') as IdToken;
+      dispatch(setIdentity(idToken));
       setTokenExpiry(accessToken.exp);
 
       changeLoginState('loggedin');
