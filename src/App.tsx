@@ -15,6 +15,7 @@ import ThemeProvider from './underpin/ThemeProvider';
 import RootStackNavigator from './navigation/RootStackNavigator';
 import useLinking from './navigation/useLinking';
 import ErrorBoundary from './underpin/ErrorBoundary';
+import KeycloakAuthentication from './underpin/KeycloakAuthentication';
 
 // How to extend the RootNavigator concept to apply to multiple form factors and orientations
 // import PortraitPhoneRootStackNavigator from './navigation/portrait/phone/RootStackNavigator';
@@ -120,22 +121,26 @@ export default function App(): ReactNode {
   // How to extend the RootNavigator concept to apply to multiple form factors and orientations
   // const { orientation, screenFormFactor } = useViewport();
   // const RootStackNavigator = rootNavMatrix[orientation][screenFormFactor];
+  const urlDiscovery = process.env.KEYCLOAK_DISCOVERY_URL || '';
+  const clientId = process.env.CLIENTID || '';
   return (
     <Provider store={store}>
       <ViewportProvider>
         <ThemeProvider>
-          <ErrorBoundary forceReload={forceUpdate}>
-            <RootStackNavigator
-              ref={
-                (navigationRef as unknown) as
-                  | ((instance: NavigationContainerRef | null) => void)
-                  | RefObject<NavigationContainerRef>
-                  | null
-                  | undefined
-              }
-              initialNavigationState={initialNavigationState}
-            />
-          </ErrorBoundary>
+          <KeycloakAuthentication urlDiscovery={urlDiscovery} clientId={clientId}>
+            <ErrorBoundary forceReload={forceUpdate}>
+              <RootStackNavigator
+                ref={
+                  (navigationRef as unknown) as
+                    | ((instance: NavigationContainerRef | null) => void)
+                    | RefObject<NavigationContainerRef>
+                    | null
+                    | undefined
+                }
+                initialNavigationState={initialNavigationState}
+              />
+            </ErrorBoundary>
+          </KeycloakAuthentication>
         </ThemeProvider>
       </ViewportProvider>
     </Provider>
