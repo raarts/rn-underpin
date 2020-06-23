@@ -76,9 +76,10 @@ type Props = {
   children: ReactElement;
   urlDiscovery: string;
   clientId: string;
+  onChange?: (newState: string) => void;
 };
 
-const KeycloakAuthentication = ({ children, urlDiscovery, clientId }: Props): ReactElement => {
+const KeycloakAuthentication = ({ children, urlDiscovery, clientId, onChange }: Props): ReactElement => {
   const [loginState, setLoginState] = React.useState<LoginState>('loggedout');
   const [working, setWorking] = React.useState<boolean>(false);
   const [code, setCode] = React.useState<string>('');
@@ -101,6 +102,7 @@ const KeycloakAuthentication = ({ children, urlDiscovery, clientId }: Props): Re
   const changeLoginState = (newState: LoginState): void => {
     setLoginState(newState);
     setWorking(newState !== 'loggedout' && newState !== 'loggedin');
+    if (onChange) onChange(newState);
   };
 
   React.useEffect(() => {
@@ -185,10 +187,13 @@ const KeycloakAuthentication = ({ children, urlDiscovery, clientId }: Props): Re
     authCodeResponse,
     tokenExpiry,
     getAccessToken: async (): Promise<string | null | undefined> => {
-      if (Math.round(new Date().getTime() / 1000)) {
-        return getToken();
+      if (loginState === 'loggedin') {
+        if (Math.round(new Date().getTime() / 1000) > tokenExpiry) {
+          return getToken();
+        }
+        return new Promise(() => authCodeResponse?.access_token);
       }
-      return new Promise(() => authCodeResponse?.access_token);
+      return new Promise(() => undefined);
     },
     login: () => {
       changeLoginState('weblogin');
