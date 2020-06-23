@@ -76,7 +76,7 @@ type Props = {
   children: ReactElement;
   urlDiscovery: string;
   clientId: string;
-  onChange?: (newState: string) => void;
+  onChange?: (newState: string, idToken?: string) => void;
 };
 
 const KeycloakAuthentication = ({ children, urlDiscovery, clientId, onChange }: Props): ReactElement => {
@@ -102,7 +102,13 @@ const KeycloakAuthentication = ({ children, urlDiscovery, clientId, onChange }: 
   const changeLoginState = (newState: LoginState): void => {
     setLoginState(newState);
     setWorking(newState !== 'loggedout' && newState !== 'loggedin');
-    if (onChange) onChange(newState);
+    if (onChange) {
+      if (newState === 'loggedin') {
+        onChange(newState, authCodeResponse?.id_token || '');
+      } else {
+        onChange(newState);
+      }
+    }
   };
 
   React.useEffect(() => {
