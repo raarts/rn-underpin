@@ -165,6 +165,7 @@ const KeycloakAuthentication = ({ children, urlDiscovery, clientId }: Props): Re
       setWorking(false);
       setCode('');
       setCodeVerifier('');
+      dispatch(setLoginState('loggedout'));
       dispatch(clearIdentity());
     }
     return null;
@@ -202,6 +203,7 @@ const KeycloakAuthentication = ({ children, urlDiscovery, clientId }: Props): Re
             // eslint-disable-next-line no-console
             console.log('refreshToken expired too: forcing login');
           }
+          dispatch(setLoginState('loggedout'));
           dispatch(clearIdentity());
           return undefined;
         }
@@ -222,6 +224,7 @@ const KeycloakAuthentication = ({ children, urlDiscovery, clientId }: Props): Re
       setCode('');
       setCodeVerifier('');
       setWorking(false);
+      dispatch(setLoginState('loggedout'));
       dispatch(clearIdentity());
     },
   };
