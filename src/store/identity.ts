@@ -7,6 +7,7 @@ export type LoginState = 'loggedin' | 'loggedout' | 'gettoken' | 'weblogin';
 
 export interface IdentityState extends IdToken {
   loginState: LoginState;
+  prevSub: string;
   anonymous: string;
   accessToken: string | null;
   accessExpiry: number;
@@ -17,6 +18,7 @@ export interface IdentityState extends IdToken {
 const initialState: IdentityState = {
   /* eslint-disable @typescript-eslint/camelcase */
   loginState: 'loggedout',
+  prevSub: '',
   anonymous: '',
   accessToken: null,
   accessExpiry: 0,
@@ -64,6 +66,7 @@ const identitySlice = createSlice({
     clearIdentity: (state): IdentityState => ({
       ...initialState,
       anonymous: state.anonymous,
+      prevSub: state.prevSub,
     }),
     setAnonymousId: (state): IdentityState => {
       if (state.anonymous === '') {
@@ -74,10 +77,20 @@ const identitySlice = createSlice({
       }
       return state;
     },
-    setLoginState: (state, action: PayloadAction<LoginState>): IdentityState => ({
-      ...state,
-      loginState: action.payload,
-    }),
+    setLoginState: (state, action: PayloadAction<LoginState>): IdentityState => {
+      let { prevSub } = state;
+      if (action.payload === 'loggedout' && state.sub !== '') {
+        prevSub = state.sub;
+      }
+      if (action.payload === 'loggedin') {
+        prevSub = '';
+      }
+      return {
+        ...state,
+        loginState: action.payload,
+        prevSub,
+      };
+    },
   },
 });
 
