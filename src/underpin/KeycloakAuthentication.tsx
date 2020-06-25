@@ -3,10 +3,11 @@ import * as WebBrowser from 'expo-web-browser';
 import * as AuthSession from 'expo-auth-session';
 import { makeRedirectUri } from 'expo-auth-session';
 import { Alert, Platform } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import jwtDecode from 'jwt-decode';
 import formUrlEncode from './utils/formUrlEncode';
-import { setIdentity, clearIdentity } from '../store/identity';
+import { setIdentity, clearIdentity, LoginState, setLoginState } from '../store/identity';
+import { RootState } from '../store';
 
 export interface AccessToken {
   acr: string;
@@ -72,8 +73,6 @@ export interface AuthCodeResponse {
   token_type: string;
 }
 
-type LoginState = 'loggedin' | 'loggedout' | 'gettoken' | 'weblogin';
-
 export type KeycloakAuthenticationType = {
   getAccessToken: () => Promise<string | null | undefined>;
   login: () => void;
@@ -99,15 +98,14 @@ type Props = {
   children: ReactElement;
   urlDiscovery: string;
   clientId: string;
-  onChange?: (newState: string, idToken?: string) => void;
 };
 
-const KeycloakAuthentication = ({ children, urlDiscovery, clientId, onChange }: Props): ReactElement => {
+const KeycloakAuthentication = ({ children, urlDiscovery, clientId }: Props): ReactElement => {
   const dispatch = useDispatch();
-  const [loginState, setLoginState] = React.useState<LoginState>('loggedout');
+  const identity = useSelector((state: RootState) => state.identity);
   const [working, setWorking] = React.useState<boolean>(false);
-  const [code, setCode] = React.useState<string>('');
   const [authCodeResponse, setAuthCodeResponse] = React.useState<AuthCodeResponse | null>(null);
+  const [code, setCode] = React.useState<string>('');
   const [codeVerifier, setCodeVerifier] = React.useState<string>('');
   const [tokenExpiry, setTokenExpiry] = React.useState<number>(Math.round(new Date().getTime() / 1000));
   const discovery = AuthSession.useAutoDiscovery(urlDiscovery);
@@ -123,29 +121,16 @@ const KeycloakAuthentication = ({ children, urlDiscovery, clientId, onChange }: 
     discovery,
   );
 
-  const changeLoginState = (newState: LoginState): void => {
-    setLoginState(newState);
-    setWorking(newState !== 'loggedout' && newState !== 'loggedin');
-    if (newState === 'loggedout') {
-      dispatch(clearIdentity());
-    }
-    if (onChange) {
-      if (newState === 'loggedin') {
-        onChange(newState, authCodeResponse?.id_token || '');
-      } else {
-        onChange(newState);
-      }
-    }
-  };
-
   React.useEffect(() => {
     if (response) {
       switch (response.type) {
         case 'cancel': //  the user cancelled the authentication session by closing the browser,
-          changeLoginState('loggedout');
+          setWorking(false);
+          dispatch(clearIdentity());
           break;
         case 'dismiss': // If the authentication is dismissed manually with AuthSession.dismiss()
-          changeLoginState('loggedout');
+          setWorking(false);
+          dispatch(clearIdentity());
           break;
         case 'locked': // AuthSession.startAsync called more than once before the first call has returned
           // do nothing, already working on logging in
@@ -157,12 +142,14 @@ const KeycloakAuthentication = ({ children, urlDiscovery, clientId, onChange }: 
           } else {
             Alert.alert('Authentication error', response.params.error_description);
           }
-          changeLoginState('loggedout');
+          setWorking(false);
+          dispatch(clearIdentity());
           break;
         case 'success': // authentication flow is successful
           setCode(response.params.code);
           setCodeVerifier(request?.codeVerifier || '');
-          changeLoginState('gettoken');
+          setWorking(true);
+          dispatch(setLoginState('gettoken'));
           break;
         default:
           break;
@@ -194,10 +181,12 @@ const KeycloakAuthentication = ({ children, urlDiscovery, clientId, onChange }: 
 
       const accessToken = jwtDecode(authCode.access_token || '') as AccessToken;
       const idToken = jwtDecode(authCode.id_token || '') as IdToken;
-      dispatch(setIdentity(idToken));
       setTokenExpiry(accessToken.exp);
-
-      changeLoginState('loggedin');
+      setWorking(false);
+      setCode('');
+      setCodeVerifier('');
+      dispatch(setIdentity(idToken));
+      dispatch(setLoginState('loggedin'));
       return authCode.access_token;
     } catch (e) {
       if (Platform.OS === 'web') {
@@ -206,39 +195,46 @@ const KeycloakAuthentication = ({ children, urlDiscovery, clientId, onChange }: 
       } else {
         Alert.alert('AuthCode Authentication error', e || 'something went wrong');
       }
+      setWorking(false);
+      setAuthCodeResponse(null);
+      setCode('');
+      setCodeVerifier('');
+      dispatch(clearIdentity());
     }
     return null;
   };
 
   React.useEffect(() => {
-    if (loginState === 'gettoken') {
+    if (identity.loginState === 'gettoken') {
       getToken().then();
     }
-  }, [loginState]);
+  }, [identity.loginState]);
 
   const context: KeycloakAuthenticationType = {
-    loginState,
+    loginState: identity.loginState,
     working,
     authCodeResponse,
     tokenExpiry,
     getAccessToken: async (): Promise<string | null | undefined> => {
-      if (loginState === 'loggedin') {
+      if (identity.loginState === 'loggedin') {
         if (Math.round(new Date().getTime() / 1000) > tokenExpiry) {
           return getToken();
         }
-        return new Promise(() => authCodeResponse?.access_token);
+        return authCodeResponse?.access_token;
       }
-      return new Promise(() => undefined);
+      return undefined;
     },
     login: () => {
-      changeLoginState('weblogin');
+      setWorking(true);
+      dispatch(setLoginState('weblogin'));
       promptAsync().then();
     },
     logout: () => {
       setAuthCodeResponse(null);
-      changeLoginState('loggedout');
       setCode('');
       setCodeVerifier('');
+      setWorking(false);
+      dispatch(clearIdentity());
     },
   };
   if (__DEV__) {

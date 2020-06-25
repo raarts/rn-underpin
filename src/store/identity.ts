@@ -2,12 +2,16 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 import { IdToken } from '../underpin/KeycloakAuthentication';
 
+export type LoginState = 'loggedin' | 'loggedout' | 'gettoken' | 'weblogin';
+
 export interface IdentityState extends IdToken {
+  loginState: LoginState;
   anonymous: string;
 }
 
 const initialState: IdentityState = {
   /* eslint-disable @typescript-eslint/camelcase */
+  loginState: 'loggedout',
   anonymous: '',
   acr: '',
   aud: '',
@@ -54,9 +58,13 @@ const identitySlice = createSlice({
       }
       return state;
     },
+    setLoginState: (state, action: PayloadAction<LoginState>): IdentityState => ({
+      ...state,
+      loginState: action.payload,
+    }),
   },
 });
 
-export const { setIdentity, clearIdentity, setAnonymousId } = identitySlice.actions;
+export const { setIdentity, clearIdentity, setAnonymousId, setLoginState } = identitySlice.actions;
 
 export default identitySlice.reducer;
