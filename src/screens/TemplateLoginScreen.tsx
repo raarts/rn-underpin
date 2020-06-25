@@ -24,6 +24,12 @@ const TemplateLoginScreen = (): ReactElement => {
             onPress={(): void => keycloak.logout()}
           />
           <View style={styles.flex3} />
+          <Button
+            disabled={keycloak.loginState !== 'loggedin'}
+            title="Test Token Expiry"
+            onPress={async (): Promise<string | null | undefined> => keycloak.getAccessToken()}
+          />
+          <View style={styles.flex3} />
         </View>
       </View>
     </SafeAreaView>
